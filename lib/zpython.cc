@@ -22,6 +22,8 @@
 
 #include <zorp/zpython.h>
 
+#include <stdlib.h>
+
 static PyThreadState *initial_thread;
 
 /**
@@ -39,13 +41,14 @@ z_python_init(void)
 
   if (getenv("PYTHONPATH") == NULL)
     {
-      g_snprintf(buf, sizeof(buf), "PYTHONPATH=%s", ZORP_SYSCONFDIR);
+      g_snprintf(buf, sizeof(buf), "%s", ZORP_SYSCONFDIR);
     }
   else
     {
-      g_snprintf(buf, sizeof(buf), "PYTHONPATH=%s:%s", ZORP_SYSCONFDIR, getenv("PYTHONPATH"));
+      g_snprintf(buf, sizeof(buf), "%s:%s", ZORP_SYSCONFDIR, getenv("PYTHONPATH"));
     }
-  putenv(buf);
+
+  setenv("PYTHONPATH", buf, 1);
   putenv("PYTHONOPTIMIZE=2");
   PySys_AddWarnOption("ignore:hex/oct constants > sys.maxint will return positive values in Python 2.4 and up:FutureWarning");
   PySys_AddWarnOption("ignore:x<<y losing bits or changing sign will return a long in Python 2.4 and up:FutureWarning");
